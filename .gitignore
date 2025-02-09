@@ -1,0 +1,40 @@
+# Ignorowanie katalogu node_modules (zainstalowane zależności)
+node_modules/
+
+# Ignorowanie plików logów
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Ignorowanie buildów i plików konfiguracyjnych środowiska
+dist
+dist-ssr
+*.local
+
+# Ignorowanie plików konfiguracyjnych środowiska (jeśli dodasz w przyszłości)
+.env
+
+# Ignorowanie plików systemowych
+.DS_Store
+Thumbs.db
+
+# Ignorowanie plików cache
+.cache/
+tmp/
+
+# Ignorowanie plików lock innego menedżera pakietów (opcjonalne)
+package-lock.json
+
+# Pliki i katalogi edytorów
+.vscode/*
+!.vscode/extensions.json
+.idea
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
