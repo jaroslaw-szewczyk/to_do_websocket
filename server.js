@@ -27,14 +27,14 @@ io.on('connection', (socket) => {
   socket.emit('updateData', tasks);
 
   socket.on('addTask', task => {
-    users.push({id: task.id ,name: task.name});
+    tasks.push({id: task.id ,name: task.name});
     socket.broadcast.emit('addTask', task);
   });
 
   socket.on('removeTask', taskID => { 
-    const task = tasks.findIndex( myTask => myTask.id === taskID);
-    if(task) {
-      users.splice(index, 1);
+    const index = tasks.findIndex( myTask => myTask.id === taskID);
+    if(index !== -1) {
+      tasks.splice(index, 1);
       socket.broadcast.emit('removeTask', taskID);
     }
    });

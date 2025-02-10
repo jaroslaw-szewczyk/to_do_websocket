@@ -11,29 +11,45 @@ function App() {
     const socket = io('ws://localhost:8000', { transports: ['websocket'] });
     setSocket(socket);
 
+    socket.on('updateData', (updatedTasks) => updateTask(updatedTasks))
+    socket.on('addTask', (task) => addTask(task))
+    socket.on('removeTask', (id) => removeTask(id, false));
+
     return () => {
       socket.disconnect();
     };
   }, []);
 
-  const removeTask = (taskID) => {
-    setTasks(prevTask => prevTask.filter( task => task.id !== taskID));
-    socket.emit('removeTask', taskID);
+  const updateTask = (updatedTasks) => {
+    setTasks(updatedTasks);
+  }
+
+  const removeTask = (taskID, localAction = true) => {
+    setTasks(prevTasks => {
+      const newTasks = prevTasks.filter(task => task.id !== taskID);
+      
+      if (localAction) {
+        socket.emit('removeTask', taskID);
+      }
+  
+      return newTasks;
+    });
   }
 
   const handleInputChange = (e) => {
     setTaskName(e.target.value);
   };
   
-  const addTask = () => {
-
+  const addTask = (task) => {
+    setTasks(tasks => [...tasks, task]);
   }
 
-  const submitForm = (event) => {
-    event.preventDefault();
-    console.log({name: taskName, id: uuidv4()})
-    addTask({name: taskName, id: uuidv4()});
-    socket.emit('addTask', taskName);
+  const submitForm = (e) => {
+    e.preventDefault();
+    const payload = {id: uuidv4(), name: taskName};
+    addTask(payload);
+    socket.emit('addTask', payload);
+    setTaskName('');
   }
 
   return (
@@ -48,15 +64,15 @@ function App() {
 
       <ul className="tasks-section__list" id="tasks-list">
         {
-          tasks.map( task => {
-            <li className="task">{task.name} <button className="btn btn--red" onClick={() => removeTask(task.id)}>Remove</button></li>
-          })
+          tasks.map( task => (
+            <li key={task.id} className="task">{task.name} <button className="btn btn--red" onClick={() => removeTask(task.id)}>Remove</button></li>
+          ))
         }
       </ul>
 
       <form id="add-task-form" onSubmit={submitForm}>
-        <input className="text-input" autoComplete="off" type="text" placeholder="Type your description" id="task-name" onChange={handleInputChange}/>
-        <button className="btn" type="submit"e>Add</button>
+        <input className="text-input" autoComplete="off" type="text" placeholder="Type your description" id="task-name" value={taskName} onChange={handleInputChange}/>
+        <button className="btn" type="submit">Add</button>
       </form>
 
     </section>
